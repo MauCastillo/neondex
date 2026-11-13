@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#141B38"/>
+      <stop offset="65%" stop-color="#090C1A"/>
+      <stop offset="100%" stop-color="#05060C"/>
+    </radialGradient>
+    <linearGradient id="topShell" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF007F"/>
+      <stop offset="55%" stop-color="#B90073"/>
+      <stop offset="100%" stop-color="#4A004E"/>
+    </linearGradient>
+    <linearGradient id="botShell" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0C2A45"/>
+      <stop offset="100%" stop-color="#070B1A"/>
+    </linearGradient>
+    <linearGradient id="cyanNeon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#80FAFF"/>
+      <stop offset="50%" stop-color="#00F0FF"/>
+      <stop offset="100%" stop-color="#0095FF"/>
+    </linearGradient>
+    <linearGradient id="yellowNeon" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FCE300"/>
+      <stop offset="100%" stop-color="#FF9E00"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Deep cyberpunk background -->
+  <rect width="512" height="512" rx="96" fill="url(#bgGrad)"/>
+
+  <!-- Subtle cyber grid -->
+  <g stroke="#00F0FF" stroke-opacity="0.12" stroke-width="2">
+    <line x1="64" y1="0" x2="64" y2="512"/>
+    <line x1="128" y1="0" x2="128" y2="512"/>
+    <line x1="384" y1="0" x2="384" y2="512"/>
+    <line x1="448" y1="0" x2="448" y2="512"/>
+    <line x1="0" y1="64" x2="512" y2="64"/>
+    <line x1="0" y1="128" x2="512" y2="128"/>
+    <line x1="0" y1="384" x2="512" y2="384"/>
+    <line x1="0" y1="448" x2="512" y2="448"/>
+  </g>
+
+  <!-- Outer chamfered HUD bracket frame -->
+  <path d="M 48 110 L 48 64 L 64 48 L 128 48" fill="none" stroke="#00F0FF" stroke-width="8" stroke-linecap="square"/>
+  <path d="M 384 48 L 448 48 L 464 64 L 464 110" fill="none" stroke="#FF007F" stroke-width="8" stroke-linecap="square"/>
+  <path d="M 48 402 L 48 448 L 64 464 L 128 464" fill="none" stroke="#FF007F" stroke-width="8" stroke-linecap="square"/>
+  <path d="M 384 464 L 448 464 L 464 448 L 464 402" fill="none" stroke="#FCE300" stroke-width="8" stroke-linecap="square"/>
+
+  <!-- Outer segmented cyber ring -->
+  <circle cx="256" cy="256" r="184" fill="none" stroke="#00F0FF" stroke-width="5" stroke-opacity="0.35" stroke-dasharray="60 22 18 22"/>
+  <circle cx="256" cy="256" r="168" fill="none" stroke="#FF007F" stroke-width="4" stroke-opacity="0.45" stroke-dasharray="100 40"/>
+
+  <!-- Cyber Pokeball Body -->
+  <!-- Top half (magenta cyberpunk armor) -->
+  <path d="M 106 244 A 150 150 0 0 1 406 244 L 320 244 A 64 64 0 0 0 192 244 Z" fill="url(#topShell)" stroke="#FF40A0" stroke-width="5"/>
+  <!-- Diagonal armor seam highlights -->
+  <path d="M 145 170 L 210 170 L 228 192" fill="none" stroke="#FCE300" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 332 146 L 372 186" fill="none" stroke="#00F0FF" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Bottom half (obsidian tech alloy) -->
+  <path d="M 106 268 A 150 150 0 0 0 406 268 L 320 268 A 64 64 0 0 1 192 268 Z" fill="url(#botShell)" stroke="#00F0FF" stroke-width="5"/>
+  <!-- Bottom tech vent lines -->
+  <line x1="172" y1="342" x2="226" y2="342" stroke="#00F0FF" stroke-width="6" stroke-opacity="0.7"/>
+  <line x1="286" y1="342" x2="340" y2="342" stroke="#00F0FF" stroke-width="6" stroke-opacity="0.7"/>
+
+  <!-- Center belt cutout glow -->
+  <rect x="96" y="242" width="98" height="28" rx="4" fill="#05060C" stroke="#00F0FF" stroke-width="4"/>
+  <rect x="318" y="242" width="98" height="28" rx="4" fill="#05060C" stroke="#FF007F" stroke-width="4"/>
+
+  <!-- Central Cyber Core -->
+  <circle cx="256" cy="256" r="56" fill="#060813" stroke="url(#cyanNeon)" stroke-width="10"/>
+  <circle cx="256" cy="256" r="34" fill="#0D1633" stroke="#FF007F" stroke-width="5"/>
+  <polygon points="256,229 279,243 279,269 256,283 233,269 233,243" fill="url(#cyanNeon)"/>
+  <circle cx="256" cy="256" r="11" fill="#FCE300"/>
+</svg>
