@@ -5,7 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:neondex/core/di/service_locator.dart';
 import 'package:neondex/core/network/api_client.dart';
+import 'package:neondex/core/router/deep_link_coordinator.dart';
 import 'package:neondex/features/notifications_settings/data/datasources/local_notification_data_source.dart';
 import 'package:neondex/features/notifications_settings/data/datasources/notification_settings_local_data_source.dart';
 import 'package:neondex/features/notifications_settings/data/datasources/random_pokemon_alert_provider.dart';
@@ -15,6 +17,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class _MockLocalNotificationDataSource extends Mock
     implements LocalNotificationDataSource {}
+
+class _MockDeepLinkCoordinator extends Mock implements DeepLinkCoordinator {}
 
 void main() {
   setUpAll(() {
@@ -113,5 +117,37 @@ void main() {
 
     final persisted = await repo.getSettings();
     expect(persisted.lastRecommendedId, dispatched.id);
+  });
+
+  test('initializePlatformServicesSafely never throws when platform plugins fail',
+      () async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final offlineClient = MockClient((_) async => http.Response('err', 500));
+
+    await setupServiceLocator(
+      sharedPreferences: prefs,
+      httpClient: offlineClient,
+      initializePlatformServices: false,
+    );
+
+    final mockDeepLink = _MockDeepLinkCoordinator();
+    final mockNotifDs = _MockLocalNotificationDataSource();
+
+    when(() => mockDeepLink.initPlatformLinks())
+        .thenThrow(Exception('link channel error'));
+    when(() => mockNotifDs.initialize())
+        .thenThrow(Exception('invalid_icon'));
+
+    sl.unregister<DeepLinkCoordinator>();
+    sl.registerSingleton<DeepLinkCoordinator>(mockDeepLink);
+    sl.unregister<LocalNotificationDataSource>();
+    sl.registerSingleton<LocalNotificationDataSource>(mockNotifDs);
+
+    await expectLater(initializePlatformServicesSafely(), completes);
+    verify(() => mockDeepLink.initPlatformLinks()).called(1);
+    verify(() => mockNotifDs.initialize()).called(1);
+
+    await sl.reset();
   });
 }

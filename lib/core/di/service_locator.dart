@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -150,8 +151,27 @@ Future<void> setupServiceLocator({
   );
 
   if (initializePlatformServices) {
+    await initializePlatformServicesSafely();
+  }
+}
+
+/// Initializes platform deep links, local notifications, and background tasks
+/// without throwing or blocking initial UI startup.
+Future<void> initializePlatformServicesSafely() async {
+  try {
     await sl<DeepLinkCoordinator>().initPlatformLinks();
+  } catch (e, st) {
+    debugPrint('DeepLinkCoordinator init failed: $e\n$st');
+  }
+
+  try {
     await sl<LocalNotificationDataSource>().initialize();
+  } catch (e, st) {
+    debugPrint('LocalNotificationDataSource init failed: $e\n$st');
+    return;
+  }
+
+  try {
     final savedSettings = await sl<GetNotificationSettings>()();
     if (savedSettings.enabled) {
       await sl<LocalNotificationDataSource>().configurePeriodicSchedule(
@@ -159,5 +179,7 @@ Future<void> setupServiceLocator({
         intervalMinutes: savedSettings.intervalMinutes,
       );
     }
+  } catch (e, st) {
+    debugPrint('Notification schedule restore failed: $e\n$st');
   }
 }

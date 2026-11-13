@@ -8,7 +8,7 @@ Aplicación móvil para Android construida en **Flutter** bajo **Clean Architect
 
 El binario compilado y verificado para Android (`arm64-v8a`, `armeabi-v7a`, `x86_64`) se encuentra adjunto en la sección de Releases del repositorio:
 
-- 🔗 **GitHub Release (`v1.0.0`):** [Descargar `neondex-v1.0.0-release.apk`](https://github.com/MauCastillo/neondex/releases/tag/v1.0.0)
+- 🔗 **GitHub Release (`v1.0.1`):** [Descargar `neondex-v1.0.1-release.apk`](https://github.com/MauCastillo/neondex/releases/tag/v1.0.1)
 - **Package ID:** `com.maucastillo.neondex`
 - **Compatibilidad:** Android 7.0+ (`minSdk 24`, `targetSdk 36`, `compileSdk 37`)
 

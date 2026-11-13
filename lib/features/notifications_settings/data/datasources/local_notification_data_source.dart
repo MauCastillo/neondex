@@ -78,6 +78,8 @@ class LocalNotificationDataSourceImpl implements LocalNotificationDataSource {
   bool _initialized = false;
   Timer? _rapidDemoTimer;
 
+  static String _androidSmallIcon = 'ic_stat_neondex';
+
   static NotificationDetails _buildNotificationDetails(String body) {
     return NotificationDetails(
       android: AndroidNotificationDetails(
@@ -86,7 +88,7 @@ class LocalNotificationDataSourceImpl implements LocalNotificationDataSource {
         channelDescription: _channelDesc,
         importance: Importance.high,
         priority: Priority.high,
-        icon: 'ic_stat_neondex',
+        icon: _androidSmallIcon,
         color: CyberColors.neonCyan,
         styleInformation: BigTextStyleInformation(body),
       ),
@@ -117,47 +119,68 @@ class LocalNotificationDataSourceImpl implements LocalNotificationDataSource {
     if (_initialized) return;
     _initialized = true;
 
-    tz_data.initializeTimeZones();
+    try {
+      tz_data.initializeTimeZones();
+    } catch (_) {
+      // Never block startup if timezone database fails to initialize.
+    }
 
     if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) {
       return;
     }
 
-    const androidInit = AndroidInitializationSettings('ic_stat_neondex');
     const darwinInit = DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
     );
 
-    await _plugin.initialize(
-      settings: const InitializationSettings(
-        android: androidInit,
-        iOS: darwinInit,
-      ),
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
-        _deepLinkCoordinator.handlePayload(response.payload);
-      },
-    );
-
-    final launchDetails = await _plugin.getNotificationAppLaunchDetails();
-    if (launchDetails != null && launchDetails.didNotificationLaunchApp) {
-      _deepLinkCoordinator.handlePayload(
-        launchDetails.notificationResponse?.payload,
+    Future<void> initWithIcon(String iconName) {
+      return _plugin.initialize(
+        settings: InitializationSettings(
+          android: AndroidInitializationSettings(iconName),
+          iOS: darwinInit,
+        ),
+        onDidReceiveNotificationResponse: (NotificationResponse response) {
+          _deepLinkCoordinator.handlePayload(response.payload);
+        },
       );
     }
 
+    try {
+      await initWithIcon(_androidSmallIcon);
+    } catch (_) {
+      // Fallback to launcher mipmap if custom drawable is stripped/unavailable.
+      _androidSmallIcon = '@mipmap/ic_launcher';
+      try {
+        await initWithIcon(_androidSmallIcon);
+      } catch (_) {
+        // Keep initialization non-fatal so UI can always boot.
+      }
+    }
+
+    try {
+      final launchDetails = await _plugin.getNotificationAppLaunchDetails();
+      if (launchDetails != null && launchDetails.didNotificationLaunchApp) {
+        _deepLinkCoordinator.handlePayload(
+          launchDetails.notificationResponse?.payload,
+        );
+      }
+    } catch (_) {}
+
     if (Platform.isAndroid) {
-      final androidPlugin = _plugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
-      await androidPlugin?.createNotificationChannel(
-        const AndroidNotificationChannel(
-          _channelId,
-          _channelName,
-          description: _channelDesc,
-          importance: Importance.high,
-        ),
-      );
+      try {
+        final androidPlugin = _plugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+        await androidPlugin?.createNotificationChannel(
+          const AndroidNotificationChannel(
+            _channelId,
+            _channelName,
+            description: _channelDesc,
+            importance: Importance.high,
+          ),
+        );
+      } catch (_) {}
     }
 
     try {

@@ -18,11 +18,17 @@ Future<void> main() async {
     ),
   );
 
-  await setupServiceLocator();
+  await setupServiceLocator(initializePlatformServices: false);
 
   runApp(
     const ProviderScope(
       child: NeonDexApp(),
     ),
   );
+
+  // Initialize notifications, WorkManager, and deep-link listeners after frame 1
+  // so Android always clears the splash screen immediately.
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    initializePlatformServicesSafely();
+  });
 }

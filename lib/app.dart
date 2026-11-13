@@ -30,7 +30,10 @@ class _NeonDexAppState extends ConsumerState<NeonDexApp> {
   @override
   void initState() {
     super.initState();
-    _deepLinkSub = _coordinator.pokemonRouteStream.listen(_navigateToPokemon);
+    _deepLinkSub = _coordinator.pokemonRouteStream.listen((pokemonId) {
+      _coordinator.consumePendingPokemonId();
+      _navigateToPokemon(pokemonId);
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final pendingId = _coordinator.consumePendingPokemonId();
